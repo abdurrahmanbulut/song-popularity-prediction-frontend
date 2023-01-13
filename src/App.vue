@@ -87,6 +87,19 @@ font-family: 'IBM Plex Serif', serif;
   width:100%;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url("https://media1.giphy.com/media/BHNfhgU63qrks/giphy.gif?cid=ecf05e47mcejtafc1jz6u7nmwvg6pb3k3vfikl92ug34muen&rid=giphy.gif&ct=g");
+  background-color: #2669a0;
+  background-image: linear-gradient(
+        -45deg, 
+        rgba(59,173,227,1) 0%, 
+        rgba(87,111,230,1) 25%, 
+        rgba(152,68,183,1) 51%, 
+        rgba(255,53,127,1) 100%
+  );  
+  animation: AnimateBG 20s ease infinite;
+}
+@keyframes AnimateBG { 
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 </style>

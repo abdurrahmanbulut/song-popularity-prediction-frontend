@@ -38,14 +38,12 @@ export default {
   border: 1px solid white;
   align-items: center;
   height: 50%;
+  width: 80%;
   padding: 3rem;
   border-radius: 2rem;
   background-color: white;
   color: black;
-  opacity: 0.8;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
-
-
+  opacity: 0.9;
 }
 .login-btn{
   width: 10rem;
