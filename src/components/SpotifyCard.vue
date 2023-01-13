@@ -240,6 +240,12 @@
     <div class="spotify-card__info" style="padding: 1rem">
       <span class="spotify-card__title">{{ cardTitle }}</span>
       <span class="spotify-card__subtitle">{{ cardSubtitle }}</span>
+      {{this.cardInfo.id}}
+    </div>
+    <div class="test-train-card">
+      <span style="background-color: green; height: 100%; width:100%;" v-if="this.cardInfo.db_status==1">Test</span>
+      <span style="background-color: red; height: 100%;width:100%;"  v-if="this.cardInfo.db_status==0">Train</span>
+      <span style="background-color: grey; height: 100%;width:100%;"  v-if="this.cardInfo.db_status==2">Not in the Dataset</span>
     </div>
   </div>
 </template>
@@ -249,7 +255,6 @@
 import { mapActions } from 'vuex';
 import axios from 'axios';
 import * as tf from '@tensorflow/tfjs';
-import jsonpickle from "jsonpickle";
 
 export default {
   props: {
@@ -301,18 +306,7 @@ export default {
       //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_2000-2023/model.json'
       // );
     }
-    async function created() {
-    // Fetch the model file from GitHub
-      const response = await fetch("https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model-sci/model.json");
-      const modelJson = await response.text();
-
-      // Deserialize the JSON string into a Python object
-      that.model2 = jsonpickle.decode(modelJson);
-    }
-    
     loadModel();
-    created();
-
   },
 
   methods: {
@@ -354,7 +348,7 @@ export default {
       //   const prediction = this.model5.predict(values);
       //   return prediction;
       // }
-      const prediction = this.model2.predict(values);
+      const prediction = this.model.predict(values);
       return prediction;
     },
     predict() {
@@ -385,8 +379,6 @@ export default {
       const st_input_arr = this.standardizeArray(input_arr[0])
       console.log(st_input_arr);
       const x_test = tf.tensor([st_input_arr]);
-
-      
     
       this.predicted_popularity = this.predictValue(x_test);
       this.predicted_popularity.print();
@@ -494,11 +486,26 @@ export default {
   height: 100px;
 
   display: grid;
-  grid-template-columns: 100px auto;
+  grid-template-columns: 100px auto 100px;
   border-radius: 0.9rem;
 
   transition: background-color 0.3s ease;
+  .test-train-card{
+    width:100px; height:100%;
+    border-radius: 0.9rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    span{
+      display: flex;
+    justify-content: center;
+    align-items: center;
+      border-radius: 0.9rem;
 
+    }
+
+  }
   &:hover {
     background-color: grey;
     border-radius: 0.9rem;
