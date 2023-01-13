@@ -1,4 +1,6 @@
 import qs from 'qs';
+import idData from '../../assets/test_train.json'
+
 
 const { VUE_APP_SEARCH_ENDPOINT } = process.env;
 
@@ -43,6 +45,20 @@ const actions = {
           return qs.stringify(params, { indices: false });
         },
       });
+
+      res.data.tracks.items.forEach(element => {
+      
+
+        if (element.id.toString() in idData && idData[element.id.toString()] == 0) {
+          element.db_status = 0;
+        } else if(element.id.toString() in idData && idData[element.id.toString()] == 1) {
+          element.db_status = 1;
+        }
+        else{
+          element.db_status = 2;
+        }
+      });
+
       commit('SET_SEARCH_RESULTS', res.data);
       commit('SET_SEARCH_STATUS', 'DONE');
     } catch (error) {
