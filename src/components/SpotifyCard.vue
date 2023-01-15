@@ -285,25 +285,17 @@ export default {
     let that = this;
     async function loadModel() {
       
-      that.model = await tf.loadLayersModel(
-        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model.json'
+      that.model1 = await tf.loadLayersModel(
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model1990/model.json'
       );
 
-      // that.model1 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_1920-1940/model.json'
-      // );
-      // that.model2 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_1940-1960/model.json'
-      // );
-      // that.model3 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_1960-1980/model.json'
-      // );
-      // that.model4 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_1980-2000/model.json'
-      // );
-      // that.model5 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_2000-2023/model.json'
-      // );
+      that.model2 = await tf.loadLayersModel(
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model2000/model.json'
+      );
+
+      that.model3 = await tf.loadLayersModel(
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model2010/model.json'
+      );
     }
     loadModel();
   },
@@ -327,27 +319,21 @@ export default {
       );
     },
     predictValue(values) {
-      // if(this.year_of_song < 1940){
-      //    const prediction = this.model1.predict(values);
-      //    return prediction;
-      // }
-      // else if(this.year_of_song < 1960){
-      //    const prediction = this.model2.predict(values);
-      //    return prediction;
-      // }
-      // else if(this.year_of_song < 1980){
-      //    const prediction = this.model3.predict(values);
-      //    return prediction;
-      // }
-      // else if(this.year_of_song < 2000){
-      //    const prediction = this.model4.predict(values);
-      //    return prediction;
-      // }
-      // else{
-      //   const prediction = this.model5.predict(values);
-      //   return prediction;
-      // }
-      const prediction = this.model.predict(values);
+      
+      if(this.year_of_song < 2000){
+         const prediction = this.model1.predict(values);
+         return prediction;
+      }
+      else if(this.year_of_song < 2010){
+         const prediction = this.model2.predict(values);
+         return prediction;
+      }
+      else if(this.year_of_song < 2023){
+         const prediction = this.model3.predict(values);
+         return prediction;
+      }
+
+      const prediction = this.model3.predict(values);
       return prediction;
     },
     predict() {
