@@ -286,15 +286,15 @@ export default {
     async function loadModel() {
       
       that.model1 = await tf.loadLayersModel(
-        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model1990/model.json'
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_1990/model.json'
       );
 
       that.model2 = await tf.loadLayersModel(
-        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model2000/model.json'
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_2000/model.json'
       );
 
       that.model3 = await tf.loadLayersModel(
-        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model2010/model.json'
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_2010/model.json'
       );
     }
     loadModel();
