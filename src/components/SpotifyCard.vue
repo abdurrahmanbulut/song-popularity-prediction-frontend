@@ -240,7 +240,6 @@
     <div class="spotify-card__info" style="padding: 1rem">
       <span class="spotify-card__title">{{ cardTitle }}</span>
       <span class="spotify-card__subtitle">{{ cardSubtitle }}</span>
-      {{this.cardInfo.id}}
     </div>
     <div class="test-train-card">
       <span style="background-color: green; height: 100%; width:100%;" v-if="this.cardInfo.db_status==1">Test</span>
