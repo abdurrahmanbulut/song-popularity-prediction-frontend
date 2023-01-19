@@ -286,14 +286,17 @@ export default {
     async function loadModel() {
       
       that.model1 = await tf.loadLayersModel(
-        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_1990/model.json'
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_1980/model.json'
       );
 
       that.model2 = await tf.loadLayersModel(
-        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_2000/model.json'
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_1990/model.json'
       );
 
       that.model3 = await tf.loadLayersModel(
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_2000/model.json'
+      );
+      that.model4 = await tf.loadLayersModel(
         'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_2010/model.json'
       );
     }
@@ -319,99 +322,89 @@ export default {
       );
     },
     predictValue(values) {
-      
-      if(this.year_of_song < 2000){
+    
+      if(this.year_of_song < 1900){
          const prediction = this.model1.predict(values);
          return prediction;
       }
-      else if(this.year_of_song < 2010){
+      else if(this.year_of_song < 2000){
          const prediction = this.model2.predict(values);
          return prediction;
       }
-      else if(this.year_of_song < 2023){
+      else if(this.year_of_song < 2010){
          const prediction = this.model3.predict(values);
          return prediction;
       }
+      else{
+         const prediction = this.model4.predict(values);
+         return prediction;
+      }
 
-      const prediction = this.model3.predict(values);
-      return prediction;
     },
     predict() {
       
        // Create one dimensional array
-      const input_arr = [[1, 1, 1, 1,
-                    0, 0, 0, 1,
-                    0,0, 0, 1,
-                          1, 1]]
+      var input_arr = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1]]
 
-      input_arr[0][0] = this.audio_features.duration_ms / 1000.0;
-      input_arr[0][1] = this.album_features.explicit;
-      input_arr[0][2] = this.audio_features.danceability;
-      input_arr[0][3] = this.audio_features.energy;
-      input_arr[0][4] = this.audio_features.key;
-      input_arr[0][5] = this.audio_features.loudness;
-      input_arr[0][6] = this.audio_features.mode;
-      input_arr[0][7] = this.audio_features.speechiness;
-      input_arr[0][8] = this.audio_features.acousticness;
-      input_arr[0][9] = this.audio_features.instrumentalness;
-      input_arr[0][10] = this.audio_features.liveness;
-      input_arr[0][11] = this.audio_features.valence;
-      input_arr[0][12] = this.audio_features.tempo;
-      input_arr[0][13] = this.audio_features.time_signature;
+      input_arr[0][0]  = this.album_features.explicit === false ? 0 : 1;
+      input_arr[0][1]  = this.audio_features.danceability;
+      input_arr[0][2]  = this.audio_features.energy;
+      input_arr[0][3]  = this.audio_features.key;
+      input_arr[0][4]  = this.audio_features.loudness;
+      input_arr[0][5]  = this.audio_features.mode;
+      input_arr[0][6]  = this.audio_features.speechiness;
+      input_arr[0][7]  = this.audio_features.acousticness;
+      input_arr[0][8]  = this.audio_features.instrumentalness;
+      input_arr[0][9] = this.audio_features.liveness;
+      input_arr[0][10] = this.audio_features.valence;
+      input_arr[0][11] = this.audio_features.tempo;
+      input_arr[0][12] = this.audio_features.time_signature;
+      input_arr[0][13]  = this.audio_features.duration_ms / 1000.0;
 
-      input_arr[0][1] = this.album_features.explicit === false ? 0 : 1;
 
-      const st_input_arr = this.standardizeArray(input_arr[0])
-      console.log(st_input_arr);
-      const x_test = tf.tensor([st_input_arr]);
-    
+      console.log("song", input_arr);
+
+      input_arr[0] = this.standardizeArray(input_arr[0]);
+      console.log("aa", input_arr);
+      const x_test = tf.tensor2d(input_arr, [1, input_arr[0].length]);
+
+      // const pickle = require('pickle-js')
+
+      // // Load the scaler object from the binary file
+      // const scaler = pickle.loads(fs.readFileSync('./scaler.pkl'))
+
       this.predicted_popularity = this.predictValue(x_test);
+      console.log("asd",this.predictValue(x_test));
       this.predicted_popularity.print();
       const tensorData = this.predicted_popularity.dataSync();
       
       this.predicted_popularity = tensorData[0];
 
-      this.predicted_popularity = Math.round( this.predicted_popularity );
+      this.predicted_popularity = Math.round( this.predicted_popularity);
+      // var a = Math.floor(Math.random() * 10);
+      // var b = Math.floor(Math.random() * 10);
+      // var c = Math.floor(Math.random() * 2);
+      
+      // if(c == 0){
+      //   this.predicted_popularity += a;
+      // }
+      // else{
+      //   this.predicted_popularity -= b;
+      // }
+
 
     },
-    standardizeArray(array) {
-      const mean = array.reduce((a, b) => a + b) / array.length;
-      const std = Math.sqrt(
-        array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
-          (array.length - 1)
-      );
+    standardizeArray(arr) {
 
-      return array.map(x => (x - mean) / std);
+        // Find the minimum and maximum values in the array
+        let minVal = -30;
+        let maxVal = 800;
+        // Create a new array to store the scaled values
+        let scaledArr = arr.map(val => (val - minVal) / (maxVal - minVal));
+        return scaledArr;
     },
     changeInfo() {
       this.info = !this.info;
-    },
-    // JavaScript
-    normalize(list) {
-      var minMax = list.reduce(
-        (acc, value) => {
-          if (value < acc.min) {
-            acc.min = value;
-          }
-
-          if (value > acc.max) {
-            acc.max = value;
-          }
-
-          return acc;
-        },
-        { min: Number.POSITIVE_INFINITY, max: Number.NEGATIVE_INFINITY }
-      );
-
-      return list.map((value) => {
-        // Verify that you're not about to divide by zero
-        if (minMax.max === minMax.min) {
-          return 1 / list.length;
-        }
-
-        var diff = minMax.max - minMax.min;
-        return (value - minMax.min) / diff;
-      });
     },
     getPosts(cardinfo) {
       axios({
