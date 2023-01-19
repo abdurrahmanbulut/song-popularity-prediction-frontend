@@ -323,7 +323,7 @@ export default {
     },
     predictValue(values) {
     
-      if(this.year_of_song < 1900){
+      if(this.year_of_song < 1990){
          const prediction = this.model1.predict(values);
          return prediction;
       }
