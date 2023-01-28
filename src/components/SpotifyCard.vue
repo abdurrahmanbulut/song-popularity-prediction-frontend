@@ -278,6 +278,7 @@ export default {
       predictedValue: 'click',
       valueToPredict: '',
       info: true,
+      useEnsemble: true,
     };
   },
   
@@ -368,30 +369,21 @@ export default {
       console.log("aa", input_arr);
       const x_test = tf.tensor2d(input_arr, [1, input_arr[0].length]);
 
-      // const pickle = require('pickle-js')
 
-      // // Load the scaler object from the binary file
-      // const scaler = pickle.loads(fs.readFileSync('./scaler.pkl'))
-
-      this.predicted_popularity = this.predictValue(x_test);
-      console.log("asd",this.predictValue(x_test));
-      this.predicted_popularity.print();
-      const tensorData = this.predicted_popularity.dataSync();
-      
-      this.predicted_popularity = tensorData[0];
-
-      this.predicted_popularity = Math.round( this.predicted_popularity);
-      // var a = Math.floor(Math.random() * 10);
-      // var b = Math.floor(Math.random() * 10);
-      // var c = Math.floor(Math.random() * 2);
-      
-      // if(c == 0){
-      //   this.predicted_popularity += a;
+      // if(this.useEnsemble == true){
+      //   this.predicted_popularity = this.predictEnsemble(input_arr[0]);
       // }
       // else{
-      //   this.predicted_popularity -= b;
-      // }
+        this.predicted_popularity = this.predictValue(x_test);
+        console.log("asd",this.predictValue(x_test));
+        this.predicted_popularity.print();
+        const tensorData = this.predicted_popularity.dataSync();
+        
+        this.predicted_popularity = tensorData[0];
 
+        this.predicted_popularity = Math.round( this.predicted_popularity);
+      //}
+    
 
     },
     standardizeArray(arr) {
@@ -421,6 +413,21 @@ export default {
         console.log('audio', this.audio_features);
       });
     },
+    //  predictEnsemble(values) {
+    //    let data = {
+    //     features: values
+    //   }
+
+    //   // Send a post request to the server
+    //   axios.post('http://127.0.0.1:5000/predict', data)
+    //     .then(response => {
+    //       // Update the prediction data with the response
+    //       this.prediction = response.data.prediction
+    //     })
+    //     .catch(error => {
+    //       console.log(error)
+    //     })
+    // },
 
     changeSpotifyCard() {
       console.log(this.playSong);
