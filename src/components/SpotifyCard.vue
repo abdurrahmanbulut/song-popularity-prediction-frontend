@@ -240,7 +240,6 @@
     <div class="spotify-card__info" style="padding: 1rem">
       <span class="spotify-card__title">{{ cardTitle }}</span>
       <span class="spotify-card__subtitle">{{ cardSubtitle }}</span>
-      {{this.cardInfo.id}}
     </div>
     <div class="test-train-card">
       <span style="background-color: green; height: 100%; width:100%;" v-if="this.cardInfo.db_status==1">Test</span>
@@ -279,6 +278,7 @@ export default {
       predictedValue: 'click',
       valueToPredict: '',
       info: true,
+      useEnsemble: true,
     };
   },
   
@@ -286,25 +286,20 @@ export default {
     let that = this;
     async function loadModel() {
       
-      that.model = await tf.loadLayersModel(
-        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model.json'
+      that.model1 = await tf.loadLayersModel(
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_1980/model.json'
       );
 
-      // that.model1 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_1920-1940/model.json'
-      // );
-      // that.model2 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_1940-1960/model.json'
-      // );
-      // that.model3 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_1960-1980/model.json'
-      // );
-      // that.model4 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_1980-2000/model.json'
-      // );
-      // that.model5 = await tf.loadLayersModel(
-      //     'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model_2000-2023/model.json'
-      // );
+      that.model2 = await tf.loadLayersModel(
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_1990/model.json'
+      );
+
+      that.model3 = await tf.loadLayersModel(
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_2000/model.json'
+      );
+      that.model4 = await tf.loadLayersModel(
+        'https://raw.githubusercontent.com/abdurrahmanbulut/song-popularity-prediction-web/redirect/src/assets/model/model_2010/model.json'
+      );
     }
     loadModel();
   },
@@ -328,105 +323,80 @@ export default {
       );
     },
     predictValue(values) {
-      // if(this.year_of_song < 1940){
-      //    const prediction = this.model1.predict(values);
-      //    return prediction;
-      // }
-      // else if(this.year_of_song < 1960){
-      //    const prediction = this.model2.predict(values);
-      //    return prediction;
-      // }
-      // else if(this.year_of_song < 1980){
-      //    const prediction = this.model3.predict(values);
-      //    return prediction;
-      // }
-      // else if(this.year_of_song < 2000){
-      //    const prediction = this.model4.predict(values);
-      //    return prediction;
-      // }
-      // else{
-      //   const prediction = this.model5.predict(values);
-      //   return prediction;
-      // }
-      const prediction = this.model.predict(values);
-      return prediction;
+    
+      if(this.year_of_song < 1990){
+         const prediction = this.model1.predict(values);
+         return prediction;
+      }
+      else if(this.year_of_song < 2000){
+         const prediction = this.model2.predict(values);
+         return prediction;
+      }
+      else if(this.year_of_song < 2010){
+         const prediction = this.model3.predict(values);
+         return prediction;
+      }
+      else{
+         const prediction = this.model4.predict(values);
+         return prediction;
+      }
+
     },
     predict() {
       
        // Create one dimensional array
-      const input_arr = [[1, 1, 1, 1,
-                    0, 0, 0, 1,
-                    0,0, 0, 1,
-                          1, 1]]
+      var input_arr = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1]]
 
-      input_arr[0][0] = this.audio_features.duration_ms / 1000.0;
-      input_arr[0][1] = this.album_features.explicit;
-      input_arr[0][2] = this.audio_features.danceability;
-      input_arr[0][3] = this.audio_features.energy;
-      input_arr[0][4] = this.audio_features.key;
-      input_arr[0][5] = this.audio_features.loudness;
-      input_arr[0][6] = this.audio_features.mode;
-      input_arr[0][7] = this.audio_features.speechiness;
-      input_arr[0][8] = this.audio_features.acousticness;
-      input_arr[0][9] = this.audio_features.instrumentalness;
-      input_arr[0][10] = this.audio_features.liveness;
-      input_arr[0][11] = this.audio_features.valence;
-      input_arr[0][12] = this.audio_features.tempo;
-      input_arr[0][13] = this.audio_features.time_signature;
+      input_arr[0][0]  = this.album_features.explicit === false ? 0 : 1;
+      input_arr[0][1]  = this.audio_features.danceability;
+      input_arr[0][2]  = this.audio_features.energy;
+      input_arr[0][3]  = this.audio_features.key;
+      input_arr[0][4]  = this.audio_features.loudness;
+      input_arr[0][5]  = this.audio_features.mode;
+      input_arr[0][6]  = this.audio_features.speechiness;
+      input_arr[0][7]  = this.audio_features.acousticness;
+      input_arr[0][8]  = this.audio_features.instrumentalness;
+      input_arr[0][9] = this.audio_features.liveness;
+      input_arr[0][10] = this.audio_features.valence;
+      input_arr[0][11] = this.audio_features.tempo;
+      input_arr[0][12] = this.audio_features.time_signature;
+      input_arr[0][13]  = this.audio_features.duration_ms / 1000.0;
 
-      input_arr[0][1] = this.album_features.explicit === false ? 0 : 1;
 
-      const st_input_arr = this.standardizeArray(input_arr[0])
-      console.log(st_input_arr);
-      const x_test = tf.tensor([st_input_arr]);
+      console.log("song", input_arr);
+
+      input_arr[0] = this.standardizeArray(input_arr[0]);
+      console.log("aa", input_arr);
+      const x_test = tf.tensor2d(input_arr, [1, input_arr[0].length]);
+
+
+      // if(this.useEnsemble == true){
+      //   this.predicted_popularity = this.predictEnsemble(input_arr[0]);
+      // }
+      // else{
+        this.predicted_popularity = this.predictValue(x_test);
+        console.log("asd",this.predictValue(x_test));
+        this.predicted_popularity.print();
+        const tensorData = this.predicted_popularity.dataSync();
+        
+        this.predicted_popularity = tensorData[0];
+
+        this.predicted_popularity = Math.round( this.predicted_popularity);
+      //}
     
-      this.predicted_popularity = this.predictValue(x_test);
-      this.predicted_popularity.print();
-      const tensorData = this.predicted_popularity.dataSync();
-      
-      this.predicted_popularity = tensorData[0];
-
-      this.predicted_popularity = Math.round( this.predicted_popularity );
 
     },
-    standardizeArray(array) {
-      const mean = array.reduce((a, b) => a + b) / array.length;
-      const std = Math.sqrt(
-        array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
-          (array.length - 1)
-      );
+    standardizeArray(arr) {
 
-      return array.map(x => (x - mean) / std);
+        // Find the minimum and maximum values in the array
+        let minVal = -30;
+        let maxVal = 800;
+        // Create a new array to store the scaled values
+        let scaledArr = arr.map(val => (val - minVal) / (maxVal - minVal));
+        return scaledArr;
     },
     changeInfo() {
       this.info = !this.info;
-    },
-    // JavaScript
-    normalize(list) {
-      var minMax = list.reduce(
-        (acc, value) => {
-          if (value < acc.min) {
-            acc.min = value;
-          }
-
-          if (value > acc.max) {
-            acc.max = value;
-          }
-
-          return acc;
-        },
-        { min: Number.POSITIVE_INFINITY, max: Number.NEGATIVE_INFINITY }
-      );
-
-      return list.map((value) => {
-        // Verify that you're not about to divide by zero
-        if (minMax.max === minMax.min) {
-          return 1 / list.length;
-        }
-
-        var diff = minMax.max - minMax.min;
-        return (value - minMax.min) / diff;
-      });
     },
     getPosts(cardinfo) {
       axios({
@@ -443,6 +413,21 @@ export default {
         console.log('audio', this.audio_features);
       });
     },
+    //  predictEnsemble(values) {
+    //    let data = {
+    //     features: values
+    //   }
+
+    //   // Send a post request to the server
+    //   axios.post('http://127.0.0.1:5000/predict', data)
+    //     .then(response => {
+    //       // Update the prediction data with the response
+    //       this.prediction = response.data.prediction
+    //     })
+    //     .catch(error => {
+    //       console.log(error)
+    //     })
+    // },
 
     changeSpotifyCard() {
       console.log(this.playSong);
